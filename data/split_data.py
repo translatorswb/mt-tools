@@ -23,7 +23,7 @@ LOWER_SRC = False
 
 MAX_TOKENS = 100
 FILTER = True
-CHECK_DUPLICATION_IN_SET = 1 #0 - SRC, 1 - TGT
+CHECK_DUPLICATION_IN_SET = 1 #0 - SRC, 1 - TGT, -1 - don't check 
 
 all_src_filepath = sys.argv[1]
 all_tgt_filepath = sys.argv[2]
@@ -46,23 +46,25 @@ def write_to_file(collection, fname):
 			f.write(element)
 
 #Duplication checking
-def pick_unique_testset(allset_src, allset_tgt, testsetsize, check_duplication_in):
+def pick_unique_testset(allset_src, allset_tgt, testsetsize, check_duplication_in=-1):
 	testset_src = []
 	testset_tgt = []
 	grabbed = []
 	for i in range(len(allset_src)):
 		found_duplicate = False
-		if check_duplication_in == 0:
-			s = allset_src[i]
-			check_in = allset_src[0:i] + allset_src[i+1:]
-		else:
-			s = allset_tgt[i]
-			check_in = allset_tgt[0:i] + allset_tgt[i+1:]
-		
-		for x in check_in:
-			if s == x:
-				found_duplicate = True
-				break
+
+		if not check_duplication_in == -1:
+			if check_duplication_in == 0:
+				s = allset_src[i]
+				check_in = allset_src[0:i] + allset_src[i+1:]
+			else:
+				s = allset_tgt[i]
+				check_in = allset_tgt[0:i] + allset_tgt[i+1:]
+			
+			for x in check_in:
+				if s == x:
+					found_duplicate = True
+					break
 
 		if not found_duplicate:
 			testset_src.append(allset_src[i])
